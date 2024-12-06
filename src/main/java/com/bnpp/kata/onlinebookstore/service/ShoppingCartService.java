@@ -1,19 +1,24 @@
 package com.bnpp.kata.onlinebookstore.service;
 
+import com.bnpp.kata.onlinebookstore.entity.Books;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
+import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
+import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
+import com.bnpp.kata.onlinebookstore.store.BookDetails;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartService {
 
     private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartItemRepository shoppingCartItemRepository;
 
     public List<CartResponse> getCartItems (Long userId) {
 
@@ -24,8 +29,28 @@ public class ShoppingCartService {
             return Collections.emptyList();
         }
 
-        List<CartResponse> responseList = new ArrayList<> ();
-        responseList.add(CartResponse.builder().build());
-        return responseList;
+        List<ShoppingCartItem> shoppingCartItems = shoppingCartItemRepository.findByShoppingCartId(shoppingCart.getId());
+
+        return shoppingCartItems.stream().map(item ->  {
+            BookDetails bookdetails = createBookDetails(item.getBook ());
+            return createCartResponse(item,bookdetails);
+        }).collect (Collectors.toList ());
+    }
+
+    private CartResponse createCartResponse (ShoppingCartItem item, BookDetails bookdetails) {
+
+        return CartResponse.builder()
+                .id(item.getId())
+                .book(bookdetails)
+                .quantity(item.getQuantity())
+                .build();
+    }
+    private BookDetails createBookDetails (Books item) {
+
+        return BookDetails.builder ().id (item.getId ())
+                .title (item.getTitle ())
+                .author (item.getAuthor ())
+                .price (item.getPrice ()).build ();
+
     }
 }

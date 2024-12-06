@@ -16,4 +16,5 @@ public class TestConstants {
     public static final String BOOK_FETCH_API = "/api/books";
     public static final String BOOK_NAME =  "Clean Code";
     public static final Long USERID =  10L;
+    public static final Double PRICE =  100.0;
 }
