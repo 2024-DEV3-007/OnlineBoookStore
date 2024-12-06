@@ -8,12 +8,16 @@ import com.bnpp.kata.onlinebookstore.repository.BookRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
+import com.bnpp.kata.onlinebookstore.store.BookRequest;
+import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
 import java.util.List;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -94,5 +98,27 @@ public class ShoppingCartServiceTest {
     private ShoppingCartItem createShoppingCartItemRepo(ShoppingCart shoppingCartUser , Books books){
         return  shoppingCartItemRepository.save(ShoppingCartItem.builder ().shoppingCart (shoppingCartUser)
                 .book (books).quantity (BOOK_COUNT).build ());
+    }
+
+    @Test
+    @DisplayName("Update Cart Details : Return the cart if the user have one")
+    void updateCart_userHaveACart_returnsUserCart() {
+
+        Users user = createUserRepo();
+        ShoppingCart shoppingCartUser = createShoppingCartRepo(user);
+        List<BookRequest> bookrequestList = createBookRequest();
+        CartRequest cartRequest = CartRequest.builder()
+                .items (bookrequestList).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        assertThat(!result.isEmpty ());
+    }
+
+    private List<BookRequest> createBookRequest(){
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        BookRequest bookrequest = BookRequest.builder ().bookId (BOOKID).quantity (BOOK_COUNT).build ();
+        bookrequestList.add (bookrequest) ;
+        return bookrequestList;
     }
 }

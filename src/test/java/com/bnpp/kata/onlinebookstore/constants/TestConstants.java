@@ -18,4 +18,5 @@ public class TestConstants {
     public static final Long USERID =  10L;
     public static final Double PRICE =  100.0;
     public static final String CART_API = "/api/cart";
+    public static final Long BOOKID = 10L;
 }

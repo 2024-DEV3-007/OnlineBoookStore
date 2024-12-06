@@ -6,9 +6,12 @@ import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.store.BookDetails;
+import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,5 +53,19 @@ public class ShoppingCartService {
                 .author (item.getAuthor ())
                 .price (item.getPrice ()).build ();
 
+    }
+
+    public List<CartResponse> updateCart(Long userId, CartRequest cartRequests) {
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
+                .orElse(null);
+
+        if (shoppingCart == null) {
+            return Collections.emptyList();
+        }
+
+        List<CartResponse> responseList = new ArrayList<> ();
+        responseList.add(CartResponse.builder().build());
+        return responseList;
     }
 }
