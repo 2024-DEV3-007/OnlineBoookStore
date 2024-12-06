@@ -11,4 +11,5 @@ public class TestConstants {
     public static final String REGISTER_API = "/api/register";
     public static final String PASSWORD_NEW = "abc";
     public static final String LOGIN_API = "/api/login";
+    public static final String EMPTY = "";
 }

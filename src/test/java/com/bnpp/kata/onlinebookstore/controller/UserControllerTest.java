@@ -93,4 +93,24 @@ public class UserControllerTest {
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
 
+    @Test
+    @DisplayName ("Login API : Invalid credentials should throw exception")
+    void register_userInvalidCredentials_shouldReturnUserResponse() throws Exception {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
+                .username (EMPTY)
+                .password (PASSWORD).build ();
+
+        when(userService.loginUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (false)
+                .build());
+
+        mockMvc.perform(post(LOGIN_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userLoginRequest)))
+                .andExpect(status().isUnauthorized ())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
+    }
+
 }
