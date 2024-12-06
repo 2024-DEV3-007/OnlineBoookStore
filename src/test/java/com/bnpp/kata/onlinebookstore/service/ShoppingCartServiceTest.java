@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -147,5 +148,19 @@ public class ShoppingCartServiceTest {
                 .items (bookrequestList).ordered (false).build ();
 
         assertThrows(UserNotFoundException.class, () -> shoppingCartService.updateCart (USERID,cartRequest));
+    }
+
+    @Test
+    @DisplayName("Update Cart Details : Return empty list if the request is empty")
+    void updateCart_checkIfTheRequestIsEmpty_returnsEmptyList() {
+
+        Users user = createUserRepo();
+        CartRequest cartRequest = CartRequest.builder()
+                .items (Collections.EMPTY_LIST)
+                .ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        assertThat(result.isEmpty ());
     }
 }

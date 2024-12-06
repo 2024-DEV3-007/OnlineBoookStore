@@ -63,6 +63,10 @@ public class ShoppingCartService {
 
         ShoppingCart cart = getOrCreateShoppingCart(userId);
 
+        if (cartRequests.getItems ().isEmpty()) {
+            return new ArrayList<>();
+        }
+
         List<CartResponse> responseList = new ArrayList<> ();
         responseList.add(CartResponse.builder().build());
         return responseList;
