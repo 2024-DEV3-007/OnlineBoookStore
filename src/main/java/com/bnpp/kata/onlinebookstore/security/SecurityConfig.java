@@ -22,6 +22,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests()
                 .antMatchers("/api/register","/api/login").permitAll()
+                .antMatchers( "/api/books").permitAll()
                 .anyRequest().authenticated();
 
         return http.build();
