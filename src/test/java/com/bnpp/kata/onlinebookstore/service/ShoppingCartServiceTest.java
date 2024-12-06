@@ -285,4 +285,21 @@ public class ShoppingCartServiceTest {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).orElse (null);
         assertThat(shoppingCart).isNull ();
     }
+
+    @Test
+    @DisplayName("Update Cart Details : Once checkout calculate the total price and save it in history table")
+    void updateCart_calculateTotalPriceOfItemsPurchased_returnsCartResponse() {
+
+        Users user = createUserRepo();
+        Books bookOne = createBooksRepo();
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        BookRequest bookrequest = BookRequest.builder ().bookId (bookOne.getId ()).quantity (BOOK_COUNT).build ();
+        bookrequestList.add (bookrequest) ;
+        CartRequest cartRequest = CartRequest.builder().items (bookrequestList).ordered (true).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        List<ShoppingHistory> shoppingHistory = shoppingHistoryRepository.findAll ();
+        assertThat(shoppingHistory.get (0).getTotalPrice ()).isEqualTo (1000.0);
+    }
 }

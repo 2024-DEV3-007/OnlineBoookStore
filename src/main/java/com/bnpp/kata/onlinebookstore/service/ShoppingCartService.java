@@ -89,14 +89,30 @@ public class ShoppingCartService {
                     .build();
             bookHistory.add(detail);
         }
-
+        double totalPrice = calculateTotalPrice(bookRequests);
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException (USER_NOT_EXISTS));
 
         bookHistory.forEach(bookHistoryDetail -> bookHistoryDetailsRepository.save(bookHistoryDetail));
 
-        shoppingHistoryRepository.save(ShoppingHistory.builder ()
-                        .user (user).bookDetails (bookHistory).build ());
+        shoppingHistoryRepository.save(ShoppingHistory.builder ().user (user)
+                .bookDetails (bookHistory)
+                .totalPrice (totalPrice).build ());
+    }
+
+    private double calculateTotalPrice(List<BookRequest> bookRequests) {
+        double totalPrice = 0.0;
+
+        for (BookRequest request : bookRequests) {
+            double bookPrice = getBookPriceById(request.getBookId());
+            totalPrice += bookPrice * request.getQuantity();
+        }
+        return totalPrice;
+    }
+
+    private double getBookPriceById(Long bookId) {
+        Books book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+        return book.getPrice();
     }
 
     private void handleEmptyCart (ShoppingCart cart) {
