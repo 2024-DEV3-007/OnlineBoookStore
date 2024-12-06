@@ -97,4 +97,21 @@ public class UserServiceTest {
         assertThat(savedUser.getPassword ()).isNotEqualTo (PASSWORD);
 
     }
+
+    @Test
+    @DisplayName ("Login User : Returns success response for valid user ")
+    void loginUser_validUser_returnsResponse() {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD).build();
+
+        UserLoginResponse result = userService.loginUser(userLoginRequest);
+
+        assertThat (result.getMessage ()).isEqualTo (REGISTER_SUCCESS);
+
+
+    }
 }

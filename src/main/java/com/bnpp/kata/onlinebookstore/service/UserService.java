@@ -48,4 +48,9 @@ public class UserService {
 
         userRepository.save (user);
     }
+
+    public UserLoginResponse loginUser (UserLoginRequest userLoginRequest) {
+
+        return createResponse(REGISTER_SUCCESS, true);
+    }
 }
