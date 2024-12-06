@@ -1,6 +1,7 @@
 package com.bnpp.kata.onlinebookstore.service;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UnauthorizedException;
 import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
@@ -55,6 +56,17 @@ public class UserService {
         if (!checkUserExists(userLoginRequest.getUsername())) {
             throw new UserNotFoundException (USER_NOT_EXISTS);
         }
+
+        if (!validateLogin(userLoginRequest.getUsername(), userLoginRequest.getPassword())) {
+            throw new UnauthorizedException (INVALID_CREDENTIALS);
+        }
+
         return createResponse(REGISTER_SUCCESS, true);
+    }
+
+    public boolean validateLogin(String username, String password) {
+
+        Users user = userRepository.findByUsername (username);
+        return ( passwordEncoder.matches (password, user.getPassword ()));
     }
 }

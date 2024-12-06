@@ -6,4 +6,5 @@ public class Constants {
     public static final boolean VALID_RESPONSE = true;
     public static final String USER_EXISTS = "User already exists!";
     public static final String USER_NOT_EXISTS = "User does not exist!";
+    public static final String INVALID_CREDENTIALS ="Invalid username or password!";
 }

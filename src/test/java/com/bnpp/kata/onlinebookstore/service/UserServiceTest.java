@@ -1,6 +1,7 @@
 package com.bnpp.kata.onlinebookstore.service;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UnauthorizedException;
 import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
@@ -126,7 +127,26 @@ public class UserServiceTest {
                 .lastName(LASTNAME)
                 .password(PASSWORD).build();
 
-
         assertThrows(UserNotFoundException.class, () -> userService.loginUser(userLoginRequest));
+    }
+
+    @Test
+    @DisplayName ("Login User : Invalid Credentials should throw UnauthorizedException")
+    void loginUser_invalidCredentials_returnsResponse() {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD).build();
+        UserLoginResponse userRegister = userService.registerUser(userLoginRequest);
+
+        UserLoginRequest invalidRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD_NEW).build();
+
+        assertThrows(UnauthorizedException.class, () -> userService.loginUser(invalidRequest));
     }
 }

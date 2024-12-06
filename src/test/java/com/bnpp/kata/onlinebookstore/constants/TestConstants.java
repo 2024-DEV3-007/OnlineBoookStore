@@ -9,4 +9,5 @@ public class TestConstants {
     public static final String REGISTER_SUCCESS = "Registration successful!";
     public static final String USER_EXISTS = "User already exists!";
     public static final String REGISTER_API = "/api/register";
+    public static final String PASSWORD_NEW = "abc";
 }
