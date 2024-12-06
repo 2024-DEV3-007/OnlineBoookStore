@@ -16,20 +16,23 @@ public class UserService {
 
     public UserLoginResponse registerUser (UserLoginRequest registerRequest) {
 
-        String responseMessage ;
-        boolean validResponse= false;
-
-        if(userRepository.existsByUsername(registerRequest.getUsername ())){
-            responseMessage =USER_EXISTS;
-        } else {
-            registerNewUser (registerRequest);
-            responseMessage = REGISTER_SUCCESS;
-            validResponse = true;
+        if(checkUserExists (registerRequest.getUsername())){
+            return createResponse(USER_EXISTS, false);
         }
+
+        registerNewUser(registerRequest);
+        return createResponse(REGISTER_SUCCESS, true);
+    }
+
+    private UserLoginResponse createResponse(String message, boolean isValid) {
+
         return UserLoginResponse.builder()
-                .message(responseMessage)
-                .validResponse (validResponse)
+                .message(message)
+                .validResponse (isValid)
                 .build();
+    }
+    private boolean checkUserExists (String username) {
+        return userRepository.existsByUsername (username);
     }
 
     private void registerNewUser (UserLoginRequest registerRequest) {
