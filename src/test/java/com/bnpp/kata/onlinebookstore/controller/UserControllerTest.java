@@ -49,4 +49,25 @@ public class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
+
+    @Test
+    @DisplayName ("Register API : Return InValid Response for existing user")
+    void register_existingUserRegistration_shouldReturnInvalidResponse() throws Exception {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
+                .username (USERNAME)
+                .firstName (FIRSTNAME)
+                .lastName (LASTNAME)
+                .password (PASSWORD).build ();
+        when(userService.registerUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (false)
+                .build());
+
+        mockMvc.perform(post(REGISTER_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userLoginRequest)))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
+    }
 }

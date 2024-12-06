@@ -23,7 +23,8 @@ public class UserController {
 
         UserLoginResponse response = userService.registerUser(registerRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(response.getValidResponse ()? HttpStatus.CREATED : HttpStatus.NOT_FOUND)
+                .body(response);
 
     }
 }
