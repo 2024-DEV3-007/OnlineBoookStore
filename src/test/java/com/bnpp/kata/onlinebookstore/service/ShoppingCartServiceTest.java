@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -164,4 +165,24 @@ public class ShoppingCartServiceTest {
 
         assertThat(result.isEmpty ());
     }
+
+    @Test
+    @DisplayName("Update Cart Details : User add one item to the cart")
+    void updateCart_userAddOneItemToCart_returnsCartDetails() {
+
+        Users user = createUserRepo();
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        BookRequest bookrequest = BookRequest.builder ().bookId (createBooksRepo().getId ()).quantity (BOOK_COUNT).build ();
+        bookrequestList.add (bookrequest) ;
+        CartRequest cartRequest = CartRequest.builder()
+                .items (bookrequestList)
+                .ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUserId (user.getId ());
+        List<ShoppingCartItem> shoppingCartItem = shoppingCartItemRepository.findByShoppingCartId (shoppingCart.get ().getId ());
+        assertThat(shoppingCartItem.size ()).isEqualTo (ONE);
+    }
+
 }

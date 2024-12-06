@@ -5,10 +5,12 @@ import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
 import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
+import com.bnpp.kata.onlinebookstore.repository.BookRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.BookDetails;
+import com.bnpp.kata.onlinebookstore.store.BookRequest;
 import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
 
     public List<CartResponse> getCartItems (Long userId) {
 
@@ -67,11 +70,22 @@ public class ShoppingCartService {
             return new ArrayList<>();
         }
 
+        for (BookRequest request : cartRequests.getItems ()) {
+
+            Books book = getBookById(request.getBookId());
+            ShoppingCartItem newItem =  ShoppingCartItem.builder ().shoppingCart (cart)
+                    .book (book).quantity (request.getQuantity()).build ();
+            shoppingCartItemRepository.save(newItem);
+        }
+
         List<CartResponse> responseList = new ArrayList<> ();
         responseList.add(CartResponse.builder().build());
         return responseList;
     }
 
+    private Books getBookById(Long bookId) {
+        return bookRepository.findById(bookId).get ();
+    }
     private ShoppingCart getOrCreateShoppingCart(Long userId) {
         return shoppingCartRepository.findByUserId(userId)
                 .orElseGet(() -> createNewShoppingCart(userId));
