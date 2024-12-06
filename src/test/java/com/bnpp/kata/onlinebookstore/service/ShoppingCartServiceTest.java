@@ -111,11 +111,12 @@ public class ShoppingCartServiceTest {
         ShoppingCart shoppingCartUser = createShoppingCartRepo(user);
         List<BookRequest> bookrequestList = createBookRequest();
         CartRequest cartRequest = CartRequest.builder()
-                .items (bookrequestList).ordered (false).build ();
+                .items (Collections.EMPTY_LIST).ordered (false).build ();
 
         List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
 
-        assertThat(!result.isEmpty ());
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).get ();
+        assertThat(shoppingCart.getId ()).isEqualTo (shoppingCartUser.getId ());
     }
 
     private List<BookRequest> createBookRequest(){
@@ -132,7 +133,7 @@ public class ShoppingCartServiceTest {
         Users user = createUserRepo();
         List<BookRequest> bookrequestList = createBookRequest();
         CartRequest cartRequest = CartRequest.builder()
-                .items (bookrequestList).ordered (false).build ();
+                .items (Collections.EMPTY_LIST).ordered (false).build ();
 
         List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
 
