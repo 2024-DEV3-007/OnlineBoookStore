@@ -16,11 +16,19 @@ public class UserService {
 
     public UserLoginResponse registerUser (UserLoginRequest registerRequest) {
 
-        registerNewUser (registerRequest);
+        String responseMessage ;
+        boolean validResponse= false;
 
+        if(userRepository.existsByUsername(registerRequest.getUsername ())){
+            responseMessage =USER_EXISTS;
+        } else {
+            registerNewUser (registerRequest);
+            responseMessage = REGISTER_SUCCESS;
+            validResponse = true;
+        }
         return UserLoginResponse.builder()
-                .message(REGISTER_SUCCESS)
-                .validResponse (VALID_RESPONSE)
+                .message(responseMessage)
+                .validResponse (validResponse)
                 .build();
     }
 

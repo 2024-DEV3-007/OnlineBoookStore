@@ -4,6 +4,7 @@ import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @AfterEach
+    void cleanUp() {
+        userRepository.deleteAll();
+    }
 
     @Test
     @DisplayName ("Register New User : User Registration Successful")
@@ -50,5 +56,28 @@ public class UserServiceTest {
 
         Users savedUser = userRepository.findByUsername(USERNAME);
         assertThat (savedUser.getUsername ()).isEqualTo (USERNAME);
+    }
+
+    @Test
+    @DisplayName ("Register Existing User : Check the user is already registered")
+    void registerUser_checkUserAlreadyRegistered_returnsUserExistsResponse() {
+
+        Users existingUser = Users.builder()
+                .username(USERNAME)
+                .firstname(FIRSTNAME)
+                .lastname(LASTNAME)
+                .password(PASSWORD).build();
+        userRepository.save(existingUser);
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD).build();
+
+        UserLoginResponse result = userService.registerUser(userLoginRequest);
+
+        assertThat(result.getMessage()).isEqualTo(USER_EXISTS);
+
     }
 }
