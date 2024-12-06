@@ -53,19 +53,23 @@ public class UserService {
 
     public UserLoginResponse loginUser (UserLoginRequest userLoginRequest) {
 
+        validateUserExists (userLoginRequest);
+        validateUserCredentials (userLoginRequest);
+        return createResponse (REGISTER_SUCCESS, true);
+    }
+
+    private void validateUserExists(UserLoginRequest userLoginRequest) {
         if (!checkUserExists(userLoginRequest.getUsername())) {
-            throw new UserNotFoundException (USER_NOT_EXISTS);
+            throw new UserNotFoundException(USER_NOT_EXISTS);
         }
-
+    }
+    private void validateUserCredentials(UserLoginRequest userLoginRequest) {
         if (!validateLogin(userLoginRequest.getUsername(), userLoginRequest.getPassword())) {
-            throw new UnauthorizedException (INVALID_CREDENTIALS);
+            throw new UnauthorizedException(INVALID_CREDENTIALS);
         }
-
-        return createResponse(REGISTER_SUCCESS, true);
     }
 
     public boolean validateLogin(String username, String password) {
-
         Users user = userRepository.findByUsername (username);
         return ( passwordEncoder.matches (password, user.getPassword ()));
     }
