@@ -60,19 +60,25 @@ public class ShoppingCartService {
 
     public List<CartResponse> updateCart(Long userId, CartRequest cartRequests) {
 
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
-                .orElse(null);
-
-        if (shoppingCart == null) {
-            Users user = userRepository.findById(userId).get ();
-            ShoppingCart newCart = ShoppingCart.builder()
-                    .user(user)
-                    .build();
-            shoppingCartRepository.save(newCart);
-        }
+        ShoppingCart cart = getOrCreateShoppingCart(userId);
 
         List<CartResponse> responseList = new ArrayList<> ();
         responseList.add(CartResponse.builder().build());
         return responseList;
+    }
+
+    private ShoppingCart getOrCreateShoppingCart(Long userId) {
+        return shoppingCartRepository.findByUserId(userId)
+                .orElseGet(() -> createNewShoppingCart(userId));
+    }
+
+    private ShoppingCart createNewShoppingCart(Long userId) {
+
+        Users user = userRepository.findById(userId).get ();
+        ShoppingCart newCart = ShoppingCart.builder()
+                .user(user)
+                .build();
+
+        return shoppingCartRepository.save(newCart);
     }
 }
