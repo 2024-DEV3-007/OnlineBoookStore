@@ -29,12 +29,10 @@ public class ShoppingCartService {
             return Collections.emptyList();
         }
 
-        List<ShoppingCartItem> shoppingCartItems = shoppingCartItemRepository.findByShoppingCartId(shoppingCart.getId());
-
-        return shoppingCartItems.stream().map(item ->  {
-            BookDetails bookdetails = createBookDetails(item.getBook ());
-            return createCartResponse(item,bookdetails);
-        }).collect (Collectors.toList ());
+        return shoppingCartItemRepository.findByShoppingCartId(shoppingCart.getId())
+                .stream()
+                .map(item -> createCartResponse(item, createBookDetails(item.getBook())))
+                .collect(Collectors.toList());
     }
 
     private CartResponse createCartResponse (ShoppingCartItem item, BookDetails bookdetails) {

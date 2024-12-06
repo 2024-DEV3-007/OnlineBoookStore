@@ -38,8 +38,10 @@ public class ShoppingCartServiceTest {
 
     @AfterEach
     void cleanUp() {
+
         shoppingCartItemRepository.deleteAll ();
         shoppingCartRepository.deleteAll();
+        bookRepository.deleteAll ();
         userRepository.deleteAll ();
     }
     @Test
@@ -69,18 +71,14 @@ public class ShoppingCartServiceTest {
     @DisplayName("Cart Details : Fetch the cart details of the user")
     void getCartItems_fetchTheCartDetailsOfTheUser_returnsListOfCartItems() {
 
-        userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
-        Users user = userRepository.findByUsername (USERNAME);
-        ShoppingCart shoppingCartUser = ShoppingCart.builder ().user (user).build();
-        shoppingCartRepository.save(shoppingCartUser);
-        Books books = Books.builder ().title (BOOK_NAME).author (FIRSTNAME).price (PRICE).build ();
-        bookRepository.save (books);
-        ShoppingCartItem shoppingCartItem = ShoppingCartItem.builder ().shoppingCart (shoppingCartUser)
-                        .book (books).quantity (BOOK_COUNT).build ();
-        shoppingCartItemRepository.save(shoppingCartItem);
+        Users user = userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
+        ShoppingCart shoppingCartUser = shoppingCartRepository.save(ShoppingCart.builder ().user (user).build());
+        Books books = bookRepository.save (Books.builder ().title (BOOK_NAME).author (FIRSTNAME).price (PRICE).build ());
+        ShoppingCartItem shoppingCartItem = shoppingCartItemRepository.save(ShoppingCartItem.builder ().shoppingCart (shoppingCartUser)
+                        .book (books).quantity (BOOK_COUNT).build ());
 
         List<CartResponse> result = shoppingCartService.getCartItems (user.getId ());
 
-        assertThat(result.get(0).getBook ().getTitle ()).isEqualTo (BOOK_NAME);
+        assertThat(result.get (0).getBook ().getTitle ()).isEqualTo (BOOK_NAME);
     }
 }
