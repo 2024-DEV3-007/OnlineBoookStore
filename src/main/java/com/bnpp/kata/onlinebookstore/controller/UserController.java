@@ -27,4 +27,12 @@ public class UserController {
                 .body(response);
 
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest registerRequest) {
+
+        UserLoginResponse response = userService.loginUser(registerRequest);
+
+        return ResponseEntity.ok(response);
+    }
 }

@@ -70,4 +70,27 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
+
+    @Test
+    @DisplayName ("Login API : Return Valid Response for success user login")
+    void register_userLoginSuccess_shouldReturnUserLoginResponse() throws Exception {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
+                .username (USERNAME)
+                .firstName (FIRSTNAME)
+                .lastName (LASTNAME)
+                .password (PASSWORD).build ();
+        when(userService.loginUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (true)
+                .build());
+
+
+        mockMvc.perform(post(LOGIN_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userLoginRequest)))
+                .andExpect(status().isOk ())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
+    }
+
 }
