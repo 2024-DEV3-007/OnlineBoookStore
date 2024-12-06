@@ -12,4 +12,5 @@ public class TestConstants {
     public static final String PASSWORD_NEW = "abc";
     public static final String LOGIN_API = "/api/login";
     public static final String EMPTY = "";
+    public static final int BOOK_COUNT = 10;
 }
