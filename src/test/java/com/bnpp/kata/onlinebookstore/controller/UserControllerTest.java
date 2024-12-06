@@ -32,11 +32,7 @@ public class UserControllerTest {
     @DisplayName ("Register API : Return Valid Response for new user registration")
     void register_newUserRegistration_shouldReturnUserLoginResponse() throws Exception {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
-                .username (USERNAME)
-                .firstName (FIRSTNAME)
-                .lastName (LASTNAME)
-                .password (PASSWORD).build ();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
         when(userService.registerUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
                 .message(REGISTER_SUCCESS)
                 .validResponse (true)
@@ -54,11 +50,7 @@ public class UserControllerTest {
     @DisplayName ("Register API : Return InValid Response for existing user")
     void register_existingUserRegistration_shouldReturnInvalidResponse() throws Exception {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
-                .username (USERNAME)
-                .firstName (FIRSTNAME)
-                .lastName (LASTNAME)
-                .password (PASSWORD).build ();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
         when(userService.registerUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
                 .message(REGISTER_SUCCESS)
                 .validResponse (false)
@@ -75,16 +67,11 @@ public class UserControllerTest {
     @DisplayName ("Login API : Return Valid Response for success user login")
     void register_userLoginSuccess_shouldReturnUserLoginResponse() throws Exception {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
-                .username (USERNAME)
-                .firstName (FIRSTNAME)
-                .lastName (LASTNAME)
-                .password (PASSWORD).build ();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
         when(userService.loginUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
                 .message(REGISTER_SUCCESS)
                 .validResponse (true)
                 .build());
-
 
         mockMvc.perform(post(LOGIN_API)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,4 +100,12 @@ public class UserControllerTest {
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
 
+    private UserLoginRequest  createUserLoginRequest(){
+
+        return UserLoginRequest.builder ()
+                .username (USERNAME)
+                .firstName (FIRSTNAME)
+                .lastName (LASTNAME)
+                .password (PASSWORD).build ();
+    }
 }

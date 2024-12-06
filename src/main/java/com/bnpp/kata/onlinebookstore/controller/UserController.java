@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.bnpp.kata.onlinebookstore.constants.Constants.INVALID_CREDENTIALS;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("${onlinebookstore.usercontroller.path}")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("${onlinebookstore.endpoint.register}")
     public ResponseEntity<UserLoginResponse> register(@RequestBody UserLoginRequest registerRequest) {
 
         UserLoginResponse response = userService.registerUser(registerRequest);
@@ -30,7 +30,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/login")
+    @PostMapping("${onlinebookstore.endpoint.login}")
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest registerRequest) {
 
         if(!registerRequest.getUsername ().isEmpty () && !registerRequest.getPassword ().isEmpty ()) {
