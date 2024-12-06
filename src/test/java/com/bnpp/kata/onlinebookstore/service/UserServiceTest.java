@@ -80,4 +80,21 @@ public class UserServiceTest {
         assertThat(result.getMessage()).isEqualTo(USER_EXISTS);
 
     }
+
+    @Test
+    @DisplayName ("Register User : Check encrypted password is saved in db")
+    void registerUser_encryptPassword_returnsResponse() {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD).build();
+
+        UserLoginResponse result = userService.registerUser(userLoginRequest);
+        Users savedUser = userRepository.findByUsername(USERNAME);
+
+        assertThat(savedUser.getPassword ()).isNotEqualTo (PASSWORD);
+
+    }
 }

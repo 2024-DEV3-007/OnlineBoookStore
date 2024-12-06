@@ -6,6 +6,7 @@ import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
 import static com.bnpp.kata.onlinebookstore.constants.Constants.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserLoginResponse registerUser (UserLoginRequest registerRequest) {
 
@@ -41,7 +43,7 @@ public class UserService {
                 .username (registerRequest.getUsername ())
                 .firstname (registerRequest.getFirstName ())
                 .lastname (registerRequest.getLastName ())
-                .password (registerRequest.getPassword ())
+                .password (passwordEncoder.encode (registerRequest.getPassword ()))
                 .build ();
 
         userRepository.save (user);
