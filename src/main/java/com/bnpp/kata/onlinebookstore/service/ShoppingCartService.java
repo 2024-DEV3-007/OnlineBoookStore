@@ -66,30 +66,41 @@ public class ShoppingCartService {
     @Transactional
     public List<CartResponse> updateCart(Long userId, CartRequest cartRequests) {
 
-        List<CartResponse> responseList = new ArrayList<> ();
         ShoppingCart cart = getOrCreateShoppingCart(userId);
 
         if (cartRequests.getItems ().isEmpty()) {
             return new ArrayList<>();
         }
 
-        shoppingCartItemRepository.deleteByShoppingCartId(cart.getId());
-
-        for (BookRequest request : cartRequests.getItems ()) {
-
-            Books book = getBookById(request.getBookId());
-            ShoppingCartItem newItem =  ShoppingCartItem.builder ().shoppingCart (cart)
-                    .book (book).quantity (request.getQuantity()).build ();
-            shoppingCartItemRepository.save(newItem);
-            CartResponse cartResponse = CartResponse.builder()
-                    .quantity(request.getQuantity())
-                    .build();
-            responseList.add (cartResponse);
-        }
-
-        return responseList;
+        return updateCartItems(cart, cartRequests.getItems ());
     }
 
+    private List<CartResponse> updateCartItems(ShoppingCart cart, List<BookRequest> cartRequests) {
+
+        shoppingCartItemRepository.deleteByShoppingCartId(cart.getId());
+
+        return cartRequests.stream()
+                .map(request -> {
+                    ShoppingCartItem newItem = createCartItem(cart, request);
+                    shoppingCartItemRepository.save(newItem);
+                    return mapToCartResponse(newItem, request);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private CartResponse mapToCartResponse(ShoppingCartItem cartItem, BookRequest request) {
+
+        return CartResponse.builder()
+                .quantity(request.getQuantity())
+                .build();
+    }
+
+    private ShoppingCartItem createCartItem(ShoppingCart cart, BookRequest request) {
+
+        Books book = getBookById(request.getBookId());
+        return ShoppingCartItem.builder ().shoppingCart (cart)
+                .book (book).quantity (request.getQuantity()).build ();
+    }
     private Books getBookById(Long bookId) {
         return bookRepository.findById(bookId).get ();
     }
