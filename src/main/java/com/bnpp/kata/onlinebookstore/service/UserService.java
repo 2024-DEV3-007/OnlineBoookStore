@@ -1,6 +1,7 @@
 package com.bnpp.kata.onlinebookstore.service;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
@@ -51,6 +52,9 @@ public class UserService {
 
     public UserLoginResponse loginUser (UserLoginRequest userLoginRequest) {
 
+        if (!checkUserExists(userLoginRequest.getUsername())) {
+            throw new UserNotFoundException (USER_NOT_EXISTS);
+        }
         return createResponse(REGISTER_SUCCESS, true);
     }
 }

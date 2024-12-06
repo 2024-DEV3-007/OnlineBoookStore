@@ -1,6 +1,7 @@
 package com.bnpp.kata.onlinebookstore.service;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -107,11 +109,24 @@ public class UserServiceTest {
                 .firstName(FIRSTNAME)
                 .lastName(LASTNAME)
                 .password(PASSWORD).build();
+        UserLoginResponse userRegister = userService.registerUser(userLoginRequest);
 
         UserLoginResponse result = userService.loginUser(userLoginRequest);
 
         assertThat (result.getMessage ()).isEqualTo (REGISTER_SUCCESS);
+    }
+
+    @Test
+    @DisplayName ("Login User : Invalid user should throw UserNotFoundException")
+    void loginUser_userNotInDB_returnsResponse() {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD).build();
 
 
+        assertThrows(UserNotFoundException.class, () -> userService.loginUser(userLoginRequest));
     }
 }
