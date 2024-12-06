@@ -4,6 +4,7 @@ import com.bnpp.kata.onlinebookstore.entity.Books;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.BookRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class ShoppingCartServiceTest {
@@ -135,5 +137,15 @@ public class ShoppingCartServiceTest {
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).get ();
         assertThat(shoppingCart.getUser ().getUsername ()).isEqualTo (USERNAME);
+    }
+    @Test
+    @DisplayName("Update Cart Details : If User is not available throw error")
+    void updateCart_userNotAvailable_throwUserNotFoundException() {
+
+        List<BookRequest> bookrequestList = createBookRequest();
+        CartRequest cartRequest = CartRequest.builder()
+                .items (bookrequestList).ordered (false).build ();
+
+        assertThrows(UserNotFoundException.class, () -> shoppingCartService.updateCart (USERID,cartRequest));
     }
 }

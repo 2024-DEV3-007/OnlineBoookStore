@@ -4,6 +4,7 @@ import com.bnpp.kata.onlinebookstore.entity.Books;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
 import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
@@ -12,7 +13,7 @@ import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import static com.bnpp.kata.onlinebookstore.constants.Constants.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +75,8 @@ public class ShoppingCartService {
 
     private ShoppingCart createNewShoppingCart(Long userId) {
 
-        Users user = userRepository.findById(userId).get ();
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException (USER_NOT_EXISTS));
         ShoppingCart newCart = ShoppingCart.builder()
                 .user(user)
                 .build();
