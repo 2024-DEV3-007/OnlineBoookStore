@@ -69,12 +69,17 @@ public class ShoppingCartService {
         ShoppingCart cart = getOrCreateShoppingCart(userId);
 
         if (cartRequests.getItems ().isEmpty()) {
+            handleEmptyCart (cart);
             return new ArrayList<>();
         }
 
         return updateCartItems(cart, cartRequests.getItems ());
     }
 
+    private void handleEmptyCart (ShoppingCart cart) {
+        shoppingCartItemRepository.deleteByShoppingCartId(cart.getId());
+        shoppingCartRepository.deleteById(cart.getId ());
+    }
     private List<CartResponse> updateCartItems(ShoppingCart cart, List<BookRequest> cartRequests) {
 
         shoppingCartItemRepository.deleteByShoppingCartId(cart.getId());

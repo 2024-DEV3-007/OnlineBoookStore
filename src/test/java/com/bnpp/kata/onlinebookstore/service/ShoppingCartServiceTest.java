@@ -230,4 +230,17 @@ public class ShoppingCartServiceTest {
 
         assertThat(result.get (0).getBook ().getTitle ()).isEqualTo (BOOK_NAME_FOR_ID_10);
     }
+
+    @Test
+    @DisplayName("Update Cart Details : Delete the cart details if the cart request is empty")
+    void updateCart_deleteCartDetailsForEmptyRequest_returnsEmptyCart() {
+
+        Users user = createUserRepo();
+        CartRequest cartRequest = CartRequest.builder().items (Collections.EMPTY_LIST).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).orElse (null);
+        assertThat(shoppingCart).isNull ();
+    }
 }
