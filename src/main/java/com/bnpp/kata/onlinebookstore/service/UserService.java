@@ -16,17 +16,23 @@ public class UserService {
 
     public UserLoginResponse registerUser (UserLoginRequest registerRequest) {
 
-        Users user = Users.builder ().username (registerRequest.getUsername ())
+        registerNewUser (registerRequest);
+
+        return UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (VALID_RESPONSE)
+                .build();
+    }
+
+    private void registerNewUser (UserLoginRequest registerRequest) {
+
+        Users user = Users.builder ()
+                .username (registerRequest.getUsername ())
                 .firstname (registerRequest.getFirstName ())
                 .lastname (registerRequest.getLastName ())
                 .password (registerRequest.getPassword ())
                 .build ();
 
         userRepository.save (user);
-
-        return UserLoginResponse.builder()
-                .message(REGISTER_SUCCESS)
-                .validResponse (VALID_RESPONSE)
-                .build();
     }
 }
