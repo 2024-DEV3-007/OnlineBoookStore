@@ -243,4 +243,15 @@ public class ShoppingCartServiceTest {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).orElse (null);
         assertThat(shoppingCart).isNull ();
     }
+
+    @Test
+    @DisplayName("Update Cart Details : If the requested book is not available throw error")
+    void updateCart_requestedBookNotAvailable_throwException() {
+
+        List<BookRequest> bookrequestList = createBookRequest();
+        CartRequest cartRequest = CartRequest.builder()
+                .items (bookrequestList).ordered (false).build ();
+
+        assertThrows(Exception.class, () -> shoppingCartService.updateCart (USERID,cartRequest));
+    }
 }

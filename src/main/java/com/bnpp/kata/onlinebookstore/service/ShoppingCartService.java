@@ -109,7 +109,8 @@ public class ShoppingCartService {
                 .book (book).quantity (request.getQuantity()).build ();
     }
     private Books getBookById(Long bookId) {
-        return bookRepository.findById(bookId).get ();
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException (BOOK_NOT_FOUND));
     }
     private ShoppingCart getOrCreateShoppingCart(Long userId) {
         return shoppingCartRepository.findByUserId(userId)
