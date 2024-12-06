@@ -20,4 +20,5 @@ public class TestConstants {
     public static final String CART_API = "/api/cart";
     public static final Long BOOKID = 10L;
     public static final int ONE = 1;
+    public static final String SECOND_BOOK_NAME =  "The Clean Coder";
 }

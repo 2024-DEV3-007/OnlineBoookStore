@@ -15,6 +15,7 @@ import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import static com.bnpp.kata.onlinebookstore.constants.Constants.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +63,7 @@ public class ShoppingCartService {
 
     }
 
+    @Transactional
     public List<CartResponse> updateCart(Long userId, CartRequest cartRequests) {
 
         ShoppingCart cart = getOrCreateShoppingCart(userId);
@@ -69,6 +71,8 @@ public class ShoppingCartService {
         if (cartRequests.getItems ().isEmpty()) {
             return new ArrayList<>();
         }
+
+        shoppingCartItemRepository.deleteByShoppingCartId(cart.getId());
 
         for (BookRequest request : cartRequests.getItems ()) {
 

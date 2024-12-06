@@ -17,7 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -185,4 +184,23 @@ public class ShoppingCartServiceTest {
         assertThat(shoppingCartItem.size ()).isEqualTo (ONE);
     }
 
+    @Test
+    @DisplayName("Update Cart Details : User add multiple items to the cart")
+    void updateCart_userAddMultipleItemsToCart_returnsCartDetails() {
+
+        Users user = createUserRepo();
+        Books bookOne = createBooksRepo();
+        createShoppingCartItemRepo(createShoppingCartRepo(createUserRepo()),bookOne);
+        Books bookTwo=bookRepository.save (Books.builder ().title (SECOND_BOOK_NAME).author (FIRSTNAME).price (PRICE).build ());
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        bookrequestList.add (BookRequest.builder ().bookId (bookOne.getId ()).quantity (BOOK_COUNT).build ()) ;
+        bookrequestList.add (BookRequest.builder ().bookId (bookTwo.getId ()).quantity (ONE).build ()) ;
+        CartRequest cartRequest = CartRequest.builder().items (bookrequestList).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUserId (user.getId ());
+        List<ShoppingCartItem> shoppingCartItem = shoppingCartItemRepository.findByShoppingCartId (shoppingCart.get ().getId ());
+        assertThat(shoppingCartItem.size ()).isEqualTo (2);
+    }
 }
