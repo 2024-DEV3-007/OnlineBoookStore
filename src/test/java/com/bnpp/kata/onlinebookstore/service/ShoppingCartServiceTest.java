@@ -268,4 +268,21 @@ public class ShoppingCartServiceTest {
         Optional<ShoppingHistory> shoppingHistory = shoppingHistoryRepository.findById (1L);
         assertThat(shoppingHistory.get().getUser ().getId ()).isEqualTo (user.getId ());
     }
+
+    @Test
+    @DisplayName("Update Cart Details : Once checkout details saved in history remove the shopping cart")
+    void updateCart_removeShoppingCartDetailsOnceHistoryIsSaved_returnsCartResponse() {
+
+        Users user = createUserRepo();
+        Books bookOne = createBooksRepo();
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        BookRequest bookrequest = BookRequest.builder ().bookId (bookOne.getId ()).quantity (BOOK_COUNT).build ();
+        bookrequestList.add (bookrequest) ;
+        CartRequest cartRequest = CartRequest.builder().items (bookrequestList).ordered (true).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).orElse (null);
+        assertThat(shoppingCart).isNull ();
+    }
 }

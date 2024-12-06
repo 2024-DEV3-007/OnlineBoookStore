@@ -71,6 +71,8 @@ public class ShoppingCartService {
 
         if (cartRequests.getOrdered ()) {
             addToHistoryTable(cart.getUser().getId(), cartRequests.getItems());
+            handleEmptyCart (cart);
+            return new ArrayList<>();
         }
 
         return updateCartItems(cart, cartRequests.getItems ());
