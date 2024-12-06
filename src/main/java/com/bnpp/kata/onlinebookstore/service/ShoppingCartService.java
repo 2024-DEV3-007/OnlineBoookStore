@@ -1,14 +1,8 @@
 package com.bnpp.kata.onlinebookstore.service;
 
-import com.bnpp.kata.onlinebookstore.entity.Books;
-import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
-import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
-import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.entity.*;
 import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
-import com.bnpp.kata.onlinebookstore.repository.BookRepository;
-import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
-import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
-import com.bnpp.kata.onlinebookstore.repository.UserRepository;
+import com.bnpp.kata.onlinebookstore.repository.*;
 import com.bnpp.kata.onlinebookstore.store.BookDetails;
 import com.bnpp.kata.onlinebookstore.store.BookRequest;
 import com.bnpp.kata.onlinebookstore.store.CartRequest;
@@ -30,6 +24,8 @@ public class ShoppingCartService {
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final BookHistoryDetailsRepository bookHistoryDetailsRepository;
+    private final ShoppingHistoryRepository shoppingHistoryRepository;
 
     public List<CartResponse> getCartItems (Long userId) {
 
@@ -73,7 +69,32 @@ public class ShoppingCartService {
             return new ArrayList<>();
         }
 
+        if (cartRequests.getOrdered ()) {
+            addToHistoryTable(cart.getUser().getId(), cartRequests.getItems());
+        }
+
         return updateCartItems(cart, cartRequests.getItems ());
+    }
+
+    @Transactional
+    private void addToHistoryTable(Long userId, List<BookRequest> bookRequests) {
+
+        List<BookHistoryDetail> bookHistory = new ArrayList<>();
+        for (BookRequest request : bookRequests) {
+            BookHistoryDetail detail = BookHistoryDetail.builder()
+                    .bookId(request.getBookId())
+                    .quantity(request.getQuantity())
+                    .build();
+            bookHistory.add(detail);
+        }
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException (USER_NOT_EXISTS));
+
+        bookHistory.forEach(bookHistoryDetail -> bookHistoryDetailsRepository.save(bookHistoryDetail));
+
+        shoppingHistoryRepository.save(ShoppingHistory.builder ()
+                        .user (user).bookDetails (bookHistory).build ());
     }
 
     private void handleEmptyCart (ShoppingCart cart) {

@@ -1,14 +1,8 @@
 package com.bnpp.kata.onlinebookstore.service;
 
-import com.bnpp.kata.onlinebookstore.entity.Books;
-import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
-import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
-import com.bnpp.kata.onlinebookstore.entity.Users;
+import com.bnpp.kata.onlinebookstore.entity.*;
 import com.bnpp.kata.onlinebookstore.exception.UserNotFoundException;
-import com.bnpp.kata.onlinebookstore.repository.BookRepository;
-import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
-import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
-import com.bnpp.kata.onlinebookstore.repository.UserRepository;
+import com.bnpp.kata.onlinebookstore.repository.*;
 import com.bnpp.kata.onlinebookstore.store.BookRequest;
 import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
@@ -43,9 +37,12 @@ public class ShoppingCartServiceTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ShoppingHistoryRepository shoppingHistoryRepository;
+
     @AfterEach
     void cleanUp() {
-
+        shoppingHistoryRepository.deleteAll ();
         shoppingCartItemRepository.deleteAll ();
         shoppingCartRepository.deleteAll();
         bookRepository.deleteAll ();
@@ -253,5 +250,22 @@ public class ShoppingCartServiceTest {
                 .items (bookrequestList).ordered (false).build ();
 
         assertThrows(Exception.class, () -> shoppingCartService.updateCart (USERID,cartRequest));
+    }
+
+    @Test
+    @DisplayName("Update Cart Details : Once checkout completes add the details to the history table")
+    void updateCart_checkoutDetailsAddToHistoryTable_returnsCartResponse() {
+
+        Users user = createUserRepo();
+        Books bookOne = createBooksRepo();
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        BookRequest bookrequest = BookRequest.builder ().bookId (bookOne.getId ()).quantity (BOOK_COUNT).build ();
+        bookrequestList.add (bookrequest) ;
+        CartRequest cartRequest = CartRequest.builder().items (bookrequestList).ordered (true).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        Optional<ShoppingHistory> shoppingHistory = shoppingHistoryRepository.findById (1L);
+        assertThat(shoppingHistory.get().getUser ().getId ()).isEqualTo (user.getId ());
     }
 }
