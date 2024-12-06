@@ -203,4 +203,22 @@ public class ShoppingCartServiceTest {
         List<ShoppingCartItem> shoppingCartItem = shoppingCartItemRepository.findByShoppingCartId (shoppingCart.get ().getId ());
         assertThat(shoppingCartItem.size ()).isEqualTo (2);
     }
+
+    @Test
+    @DisplayName("Update Cart Details : User updates the existing item quantity")
+    void updateCart_userUpdatesItemQuantity_returnsNewQuantity() {
+
+        Users user = createUserRepo();
+        Books bookOne = createBooksRepo();
+        ShoppingCartItem initialShoppingCartItem = createShoppingCartItemRepo(createShoppingCartRepo(createUserRepo()),bookOne);
+        List<BookRequest> bookrequestList = new ArrayList<> ();
+        bookrequestList.add (BookRequest.builder ().bookId (bookOne.getId ()).quantity (ONE).build ()) ;
+        CartRequest cartRequest = CartRequest.builder().items (bookrequestList).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUserId (user.getId ());
+        List<ShoppingCartItem> newShoppingCartItem = shoppingCartItemRepository.findByShoppingCartId (shoppingCart.get ().getId ());
+        assertThat(initialShoppingCartItem.getQuantity ()).isNotEqualTo (newShoppingCartItem.get (0).getQuantity ());
+    }
 }

@@ -66,6 +66,7 @@ public class ShoppingCartService {
     @Transactional
     public List<CartResponse> updateCart(Long userId, CartRequest cartRequests) {
 
+        List<CartResponse> responseList = new ArrayList<> ();
         ShoppingCart cart = getOrCreateShoppingCart(userId);
 
         if (cartRequests.getItems ().isEmpty()) {
@@ -80,10 +81,12 @@ public class ShoppingCartService {
             ShoppingCartItem newItem =  ShoppingCartItem.builder ().shoppingCart (cart)
                     .book (book).quantity (request.getQuantity()).build ();
             shoppingCartItemRepository.save(newItem);
+            CartResponse cartResponse = CartResponse.builder()
+                    .quantity(request.getQuantity())
+                    .build();
+            responseList.add (cartResponse);
         }
 
-        List<CartResponse> responseList = new ArrayList<> ();
-        responseList.add(CartResponse.builder().build());
         return responseList;
     }
 
