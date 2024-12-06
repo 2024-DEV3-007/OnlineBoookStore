@@ -55,12 +55,10 @@ public class ShoppingCartServiceTest {
 
     @Test
     @DisplayName("Cart Details : Check user have entry in shopping cart")
-    void getCartItems_checkUserHaveShoppingcartEntry_returnsReponse() {
+    void getCartItems_checkUserHaveShoppingCartEntry_returnsResponse() {
 
-        userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
-        Users user = userRepository.findByUsername (USERNAME);
-        ShoppingCart shoppingCartUser = ShoppingCart.builder ().user (user).build();
-        shoppingCartRepository.save(shoppingCartUser);
+        Users user = createUserRepo();
+        ShoppingCart shoppingCartUser = createShoppingCartRepo(user);
 
         List<CartResponse> result = shoppingCartService.getCartItems (user.getId ());
 
@@ -71,14 +69,30 @@ public class ShoppingCartServiceTest {
     @DisplayName("Cart Details : Fetch the cart details of the user")
     void getCartItems_fetchTheCartDetailsOfTheUser_returnsListOfCartItems() {
 
-        Users user = userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
-        ShoppingCart shoppingCartUser = shoppingCartRepository.save(ShoppingCart.builder ().user (user).build());
-        Books books = bookRepository.save (Books.builder ().title (BOOK_NAME).author (FIRSTNAME).price (PRICE).build ());
-        ShoppingCartItem shoppingCartItem = shoppingCartItemRepository.save(ShoppingCartItem.builder ().shoppingCart (shoppingCartUser)
-                        .book (books).quantity (BOOK_COUNT).build ());
+        Users user = createUserRepo();
+        ShoppingCart shoppingCartUser = createShoppingCartRepo(user);
+        Books books = createBooksRepo();
+        ShoppingCartItem shoppingCartItem = createShoppingCartItemRepo(shoppingCartUser,books);
 
         List<CartResponse> result = shoppingCartService.getCartItems (user.getId ());
 
         assertThat(result.get (0).getBook ().getTitle ()).isEqualTo (BOOK_NAME);
+    }
+
+    private Users createUserRepo(){
+        return userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
+    }
+
+    private ShoppingCart createShoppingCartRepo(Users user){
+        return shoppingCartRepository.save(ShoppingCart.builder ().user (user).build());
+    }
+
+    private Books createBooksRepo(){
+        return bookRepository.save (Books.builder ().title (BOOK_NAME).author (FIRSTNAME).price (PRICE).build ());
+    }
+
+    private ShoppingCartItem createShoppingCartItemRepo(ShoppingCart shoppingCartUser , Books books){
+        return  shoppingCartItemRepository.save(ShoppingCartItem.builder ().shoppingCart (shoppingCartUser)
+                .book (books).quantity (BOOK_COUNT).build ());
     }
 }
