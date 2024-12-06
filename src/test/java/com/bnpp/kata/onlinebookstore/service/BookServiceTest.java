@@ -21,6 +21,6 @@ public class BookServiceTest {
 
         List<Books> result = bookService.getAllBooks ();
 
-        assertThat (result.size ()).isEqualTo (BOOK_COUNT);
+        assertThat (result.get(0).getTitle ()).isEqualTo (BOOK_NAME);
     }
 }

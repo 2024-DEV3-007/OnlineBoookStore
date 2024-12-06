@@ -4,7 +4,7 @@ import com.bnpp.kata.onlinebookstore.exception.UnauthorizedException;
 import com.bnpp.kata.onlinebookstore.service.UserService;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.bnpp.kata.onlinebookstore.constants.Constants.INVALID_CREDENTIALS;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("${onlinebookstore.usercontroller.path}")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping("${onlinebookstore.endpoint.register}")
     public ResponseEntity<UserLoginResponse> register(@RequestBody UserLoginRequest registerRequest) {

@@ -14,4 +14,5 @@ public class TestConstants {
     public static final String EMPTY = "";
     public static final int BOOK_COUNT = 10;
     public static final String BOOK_FETCH_API = "/api/books";
+    public static final String BOOK_NAME =  "Clean Code";
 }
