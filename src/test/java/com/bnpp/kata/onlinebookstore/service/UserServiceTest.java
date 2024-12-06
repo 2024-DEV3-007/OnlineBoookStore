@@ -7,6 +7,7 @@ import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,7 @@ public class UserServiceTest {
     @DisplayName ("Register New User : User Registration Successful")
     void registerUser_newUserRegistration_returnsSuccessMessage() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
-                .username (USERNAME)
-                .firstName (FIRSTNAME)
-                .lastName (LASTNAME)
-                .password (PASSWORD).build ();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
 
         UserLoginResponse result = userService.registerUser (userLoginRequest);
 
@@ -49,11 +46,7 @@ public class UserServiceTest {
     @DisplayName ("Register New User : User details should be saved in db")
     void registerUser_userDetailsSaveInDB_returnsSuccessResponse() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
-                .username (USERNAME)
-                .firstName (FIRSTNAME)
-                .lastName (LASTNAME)
-                .password (PASSWORD).build ();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
 
         UserLoginResponse result = userService.registerUser (userLoginRequest);
 
@@ -71,12 +64,7 @@ public class UserServiceTest {
                 .lastname(LASTNAME)
                 .password(PASSWORD).build();
         userRepository.save(existingUser);
-
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .username(USERNAME)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD).build();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
 
         UserLoginResponse result = userService.registerUser(userLoginRequest);
 
@@ -88,11 +76,7 @@ public class UserServiceTest {
     @DisplayName ("Register User : Check encrypted password is saved in db")
     void registerUser_encryptPassword_returnsResponse() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .username(USERNAME)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD).build();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
 
         UserLoginResponse result = userService.registerUser(userLoginRequest);
         Users savedUser = userRepository.findByUsername(USERNAME);
@@ -105,11 +89,8 @@ public class UserServiceTest {
     @DisplayName ("Login User : Returns success response for valid user ")
     void loginUser_validUser_returnsResponse() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .username(USERNAME)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD).build();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
+
         UserLoginResponse userRegister = userService.registerUser(userLoginRequest);
 
         UserLoginResponse result = userService.loginUser(userLoginRequest);
@@ -121,11 +102,7 @@ public class UserServiceTest {
     @DisplayName ("Login User : Invalid user should throw UserNotFoundException")
     void loginUser_userNotInDB_returnsResponse() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .username(USERNAME)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD).build();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
 
         assertThrows(UserNotFoundException.class, () -> userService.loginUser(userLoginRequest));
     }
@@ -134,11 +111,7 @@ public class UserServiceTest {
     @DisplayName ("Login User : Invalid Credentials should throw UnauthorizedException")
     void loginUser_invalidCredentials_returnsResponse() {
 
-        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .username(USERNAME)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD).build();
+        UserLoginRequest userLoginRequest = createUserLoginRequest ();
         UserLoginResponse userRegister = userService.registerUser(userLoginRequest);
 
         UserLoginRequest invalidRequest = UserLoginRequest.builder()
@@ -148,5 +121,14 @@ public class UserServiceTest {
                 .password(PASSWORD_NEW).build();
 
         assertThrows(UnauthorizedException.class, () -> userService.loginUser(invalidRequest));
+    }
+
+    private UserLoginRequest  createUserLoginRequest(){
+
+        return UserLoginRequest.builder ()
+                .username (USERNAME)
+                .firstName (FIRSTNAME)
+                .lastName (LASTNAME)
+                .password (PASSWORD).build ();
     }
 }
