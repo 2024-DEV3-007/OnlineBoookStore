@@ -3,8 +3,10 @@ package com.bnpp.kata.onlinebookstore.service;
 import com.bnpp.kata.onlinebookstore.entity.Books;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCart;
 import com.bnpp.kata.onlinebookstore.entity.ShoppingCartItem;
+import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartItemRepository;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
+import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.BookDetails;
 import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
@@ -22,6 +24,7 @@ public class ShoppingCartService {
 
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
+    private final UserRepository userRepository;
 
     public List<CartResponse> getCartItems (Long userId) {
 
@@ -61,7 +64,11 @@ public class ShoppingCartService {
                 .orElse(null);
 
         if (shoppingCart == null) {
-            return Collections.emptyList();
+            Users user = userRepository.findById(userId).get ();
+            ShoppingCart newCart = ShoppingCart.builder()
+                    .user(user)
+                    .build();
+            shoppingCartRepository.save(newCart);
         }
 
         List<CartResponse> responseList = new ArrayList<> ();

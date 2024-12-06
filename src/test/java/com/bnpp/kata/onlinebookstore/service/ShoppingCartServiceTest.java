@@ -121,4 +121,19 @@ public class ShoppingCartServiceTest {
         bookrequestList.add (bookrequest) ;
         return bookrequestList;
     }
+
+    @Test
+    @DisplayName("Update Cart Details : Create cart if not available")
+    void updateCart_createShoppingCartIfNotAvailable_returnsUserCart() {
+
+        Users user = createUserRepo();
+        List<BookRequest> bookrequestList = createBookRequest();
+        CartRequest cartRequest = CartRequest.builder()
+                .items (bookrequestList).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).get ();
+        assertThat(shoppingCart.getUser ().getUsername ()).isEqualTo (USERNAME);
+    }
 }
