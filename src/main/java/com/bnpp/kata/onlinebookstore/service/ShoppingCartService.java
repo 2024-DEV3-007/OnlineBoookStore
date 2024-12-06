@@ -5,6 +5,7 @@ import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class ShoppingCartService {
         if (shoppingCart == null) {
             return Collections.emptyList();
         }
-        return (List<CartResponse>) CartResponse.builder().build();
+
+        List<CartResponse> responseList = new ArrayList<> ();
+        responseList.add(CartResponse.builder().build());
+        return responseList;
     }
 }

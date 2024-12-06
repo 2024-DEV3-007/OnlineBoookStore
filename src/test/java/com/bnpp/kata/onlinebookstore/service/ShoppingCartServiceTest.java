@@ -5,6 +5,7 @@ import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.repository.ShoppingCartRepository;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class ShoppingCartServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @AfterEach
+    void cleanUp() {
+        shoppingCartRepository.deleteAll();
+        userRepository.deleteAll ();
+    }
     @Test
     @DisplayName("Cart Details : No cart available , return empty list ")
     void getCartItems_noItemsAddedToCart_returnsEmptyList() {
@@ -36,7 +42,7 @@ public class ShoppingCartServiceTest {
 
     @Test
     @DisplayName("Cart Details : Check user have entry in shopping cart")
-    void getCartItems_checkUserHaveShoppingEcartEntry_returnsReponse() {
+    void getCartItems_checkUserHaveShoppingcartEntry_returnsReponse() {
 
         userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
         Users user = userRepository.findByUsername (USERNAME);
