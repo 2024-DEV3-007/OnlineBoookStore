@@ -91,6 +91,8 @@ public class ShoppingCartService {
     private CartResponse mapToCartResponse(ShoppingCartItem cartItem, BookRequest request) {
 
         return CartResponse.builder()
+                .id(cartItem.getId())
+                .book(createBookDetails(cartItem.getBook()))
                 .quantity(request.getQuantity())
                 .build();
     }

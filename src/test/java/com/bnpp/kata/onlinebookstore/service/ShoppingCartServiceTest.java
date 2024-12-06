@@ -221,4 +221,15 @@ public class ShoppingCartServiceTest {
         List<ShoppingCartItem> newShoppingCartItem = shoppingCartItemRepository.findByShoppingCartId (shoppingCart.get ().getId ());
         assertThat(initialShoppingCartItem.getQuantity ()).isNotEqualTo (newShoppingCartItem.get (0).getQuantity ());
     }
+
+    @Test
+    @DisplayName("Update Cart Details : Once user updates return CartResponse")
+    void updateCart_userUpdatesItemSuccessfully_returnsCartResponse() {
+
+        CartRequest cartRequest = CartRequest.builder().items (createBookRequest()).ordered (false).build ();
+
+        List<CartResponse> result = shoppingCartService.updateCart (createUserRepo().getId (),cartRequest);
+
+        assertThat(result.get (0).getBook ().getTitle ()).isEqualTo (BOOK_NAME_FOR_ID_10);
+    }
 }
