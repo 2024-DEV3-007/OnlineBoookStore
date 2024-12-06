@@ -29,8 +29,7 @@ public class ShoppingCartService {
 
     public List<CartResponse> getCartItems (Long userId) {
 
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
-                .orElse(null);
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId).orElse(null);
 
         if (shoppingCart == null) {
             return Collections.emptyList();
@@ -56,7 +55,6 @@ public class ShoppingCartService {
                 .title (item.getTitle ())
                 .author (item.getAuthor ())
                 .price (item.getPrice ()).build ();
-
     }
 
     @Transactional
@@ -64,54 +62,74 @@ public class ShoppingCartService {
 
         ShoppingCart cart = getOrCreateShoppingCart(userId);
 
-        if (cartRequests.getItems ().isEmpty()) {
-            handleEmptyCart (cart);
-            return new ArrayList<>();
+        if (cartRequests.getItems().isEmpty() || cartRequests.getOrdered()) {
+            return processCartForEmptyOrOrdered(cart, cartRequests);
         }
 
-        if (cartRequests.getOrdered ()) {
+        return updateCartItems(cart, cartRequests.getItems());
+    }
+
+    private List<CartResponse> processCartForEmptyOrOrdered(ShoppingCart cart, CartRequest cartRequests) {
+        if (cartRequests.getOrdered()) {
             addToHistoryTable(cart.getUser().getId(), cartRequests.getItems());
-            handleEmptyCart (cart);
-            return new ArrayList<>();
         }
-
-        return updateCartItems(cart, cartRequests.getItems ());
+        handleEmptyCart(cart);
+        return new ArrayList<>();
     }
 
     @Transactional
     private void addToHistoryTable(Long userId, List<BookRequest> bookRequests) {
 
-        List<BookHistoryDetail> bookHistory = new ArrayList<>();
-        for (BookRequest request : bookRequests) {
-            BookHistoryDetail detail = BookHistoryDetail.builder()
-                    .bookId(request.getBookId())
-                    .quantity(request.getQuantity())
-                    .build();
-            bookHistory.add(detail);
-        }
+        List<BookHistoryDetail> bookHistory = createBookHistory(bookRequests);
         double totalPrice = calculateTotalPrice(bookRequests);
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException (USER_NOT_EXISTS));
+        Users user = findUserById(userId);
+        saveBookHistoryDetails(bookHistory);
+        saveShoppingHistory(user, bookHistory, totalPrice);
+    }
 
-        bookHistory.forEach(bookHistoryDetail -> bookHistoryDetailsRepository.save(bookHistoryDetail));
+    private void saveShoppingHistory(Users user, List<BookHistoryDetail> bookHistory, double totalPrice) {
+        shoppingHistoryRepository.save(createShoppingHistoryBuild (user, bookHistory, totalPrice));
+    }
 
-        shoppingHistoryRepository.save(ShoppingHistory.builder ().user (user)
+    private static ShoppingHistory createShoppingHistoryBuild (Users user, List<BookHistoryDetail> bookHistory, double totalPrice) {
+
+        return ShoppingHistory.builder ()
+                .user (user)
                 .bookDetails (bookHistory)
-                .totalPrice (totalPrice).build ());
+                .totalPrice (totalPrice)
+                .build ();
+    }
+
+    private void saveBookHistoryDetails(List<BookHistoryDetail> bookHistory) {
+        bookHistory.forEach(bookHistoryDetail -> bookHistoryDetailsRepository.save(bookHistoryDetail));
+    }
+
+    private Users findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_EXISTS));
+    }
+    private List<BookHistoryDetail> createBookHistory(List<BookRequest> bookRequests) {
+
+        return bookRequests.stream()
+                .map(request -> createBookHistoryDetail (request))
+                .collect(Collectors.toList());
+    }
+
+    private static BookHistoryDetail createBookHistoryDetail (BookRequest request) {
+        return BookHistoryDetail.builder ()
+                .bookId (request.getBookId ())
+                .quantity (request.getQuantity ())
+                .build ();
     }
 
     private double calculateTotalPrice(List<BookRequest> bookRequests) {
-        double totalPrice = 0.0;
-
-        for (BookRequest request : bookRequests) {
-            double bookPrice = getBookPriceById(request.getBookId());
-            totalPrice += bookPrice * request.getQuantity();
-        }
-        return totalPrice;
+        return bookRequests.stream()
+                .mapToDouble(request -> getBookPriceById(request.getBookId()) * request.getQuantity())
+                .sum();
     }
 
     private double getBookPriceById(Long bookId) {
-        Books book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+        Books book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException(BOOK_NOT_FOUND));
         return book.getPrice();
     }
 
