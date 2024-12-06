@@ -115,8 +115,7 @@ public class ShoppingCartServiceTest {
 
         List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
 
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).get ();
-        assertThat(shoppingCart.getId ()).isEqualTo (shoppingCartUser.getId ());
+        assertThat(result.size ()).isZero ();
     }
 
     private List<BookRequest> createBookRequest(){
@@ -137,8 +136,7 @@ public class ShoppingCartServiceTest {
 
         List<CartResponse> result = shoppingCartService.updateCart (user.getId (),cartRequest);
 
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId (user.getId ()).get ();
-        assertThat(shoppingCart.getUser ().getUsername ()).isEqualTo (USERNAME);
+        assertThat(result.size ()).isZero ();
     }
     @Test
     @DisplayName("Update Cart Details : If User is not available throw error")
