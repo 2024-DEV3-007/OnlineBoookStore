@@ -5,6 +5,7 @@ import com.bnpp.kata.onlinebookstore.service.UserService;
 import com.bnpp.kata.onlinebookstore.models.UserLoginRequest;
 import com.bnpp.kata.onlinebookstore.models.UserLoginResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,9 +34,13 @@ public class UserController {
     @PostMapping("${onlinebookstore.endpoint.login}")
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest registerRequest) {
 
-        if(!registerRequest.getUsername ().isEmpty () && !registerRequest.getPassword ().isEmpty ()) {
+        if(checkRequestIsNotEmpty (registerRequest)){
             return ResponseEntity.ok (userService.loginUser (registerRequest));
         }
         throw new UnauthorizedException (INVALID_CREDENTIALS);
+    }
+
+    private static boolean checkRequestIsNotEmpty (UserLoginRequest registerRequest) {
+        return StringUtils.isNotEmpty (registerRequest.getUsername ()) && StringUtils.isNotEmpty (registerRequest.getPassword ());
     }
 }

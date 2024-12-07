@@ -81,8 +81,8 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName ("Login API : Invalid credentials should throw exception")
-    void register_userInvalidCredentials_shouldReturnUserResponse() throws Exception {
+    @DisplayName ("Login API : Invalid user should throw exception")
+    void register_userInvalidUser_shouldReturnUserResponse() throws Exception {
 
         UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
                 .username (EMPTY)
@@ -107,5 +107,45 @@ public class UserControllerTest {
                 .firstName (FIRSTNAME)
                 .lastName (LASTNAME)
                 .password (PASSWORD).build ();
+    }
+
+    @Test
+    @DisplayName ("Login API : Invalid credentials should throw exception")
+    void register_userInvalidCredentials_shouldReturnUserResponse() throws Exception {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
+                .username (EMPTY)
+                .password (EMPTY).build ();
+
+        when(userService.loginUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (false)
+                .build());
+
+        mockMvc.perform(post(LOGIN_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userLoginRequest)))
+                .andExpect(status().isUnauthorized ())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
+    }
+
+    @Test
+    @DisplayName ("Login API : Invalid password should throw exception")
+    void register_userInvalidPassword_shouldReturnUserResponse() throws Exception {
+
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder ()
+                .username (USERNAME)
+                .password (EMPTY).build ();
+
+        when(userService.loginUser(userLoginRequest)).thenReturn( UserLoginResponse.builder()
+                .message(REGISTER_SUCCESS)
+                .validResponse (false)
+                .build());
+
+        mockMvc.perform(post(LOGIN_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userLoginRequest)))
+                .andExpect(status().isUnauthorized ())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
 }
