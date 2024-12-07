@@ -1,8 +1,8 @@
 package com.bnpp.kata.onlinebookstore.controller;
 
 import com.bnpp.kata.onlinebookstore.service.UserService;
-import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
-import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
+import com.bnpp.kata.onlinebookstore.models.UserLoginRequest;
+import com.bnpp.kata.onlinebookstore.models.UserLoginResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

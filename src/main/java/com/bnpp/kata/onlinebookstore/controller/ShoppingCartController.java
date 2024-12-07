@@ -2,8 +2,8 @@ package com.bnpp.kata.onlinebookstore.controller;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.service.ShoppingCartService;
-import com.bnpp.kata.onlinebookstore.store.CartRequest;
-import com.bnpp.kata.onlinebookstore.store.CartResponse;
+import com.bnpp.kata.onlinebookstore.models.CartRequest;
+import com.bnpp.kata.onlinebookstore.models.CartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

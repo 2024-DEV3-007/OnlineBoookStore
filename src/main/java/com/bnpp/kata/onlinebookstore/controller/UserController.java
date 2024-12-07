@@ -2,8 +2,8 @@ package com.bnpp.kata.onlinebookstore.controller;
 
 import com.bnpp.kata.onlinebookstore.exception.UnauthorizedException;
 import com.bnpp.kata.onlinebookstore.service.UserService;
-import com.bnpp.kata.onlinebookstore.store.UserLoginRequest;
-import com.bnpp.kata.onlinebookstore.store.UserLoginResponse;
+import com.bnpp.kata.onlinebookstore.models.UserLoginRequest;
+import com.bnpp.kata.onlinebookstore.models.UserLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

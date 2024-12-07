@@ -69,23 +69,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    bookId:
-                      type: integer
-                      example: 1
-                    title:
-                      type: string
-                      example: "The Great Gatsby"
-                    author:
-                      type: string
-                      example: "F. Scott Fitzgerald"
-                    price:
-                      type: number
-                      format: float
-                      example: 10.99
+                type: list
+
         '500':
           description: Internal server error
 

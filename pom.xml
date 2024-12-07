@@ -94,7 +94,7 @@
 							<inputSpec>${project.basedir}/src/main/resources/OnlineBookStore.yaml</inputSpec>
 							<generatorName>spring</generatorName>
 							<modelPackage>
-								com.bnpp.kata.onlinebookstore.store</modelPackage>
+								com.bnpp.kata.onlinebookstore.models</modelPackage>
 							<configOptions>
 								<interfaceOnly>true</interfaceOnly>
 								<useBuilder>true</useBuilder>

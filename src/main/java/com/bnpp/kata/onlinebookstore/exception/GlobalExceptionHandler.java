@@ -1,6 +1,6 @@
 package com.bnpp.kata.onlinebookstore.exception;
 
-import com.bnpp.kata.onlinebookstore.store.ErrorResponse;
+import com.bnpp.kata.onlinebookstore.models.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
