@@ -105,4 +105,18 @@ public class ShoppingCartControllerTest {
                         .content(new ObjectMapper ().writeValueAsString(cartRequest)))
                 .andExpect(status().isBadRequest ());
     }
+
+    @Test
+    @DisplayName("Fetch Cart Details of an invalid user should throw exception")
+    void getCartItems_userCartForInvalidUser_shouldThrowException() throws Exception {
+
+        List<CartResponse> mockCartItems = new ArrayList<> ();
+        mockCartItems.add (CartResponse.builder ().build ());
+        when(shoppingCartService.getCartItems(null)).thenReturn(mockCartItems);
+        MockAuthentication (null);
+
+        mockMvc.perform(get(CART_API)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest ());
+    }
 }

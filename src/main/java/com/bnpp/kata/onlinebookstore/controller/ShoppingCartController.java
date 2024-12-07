@@ -27,10 +27,10 @@ public class ShoppingCartController {
     public ResponseEntity<List<CartResponse>> getCartItems () {
 
         Users currentUser =  getCurrentUser();
-
-        List<CartResponse> cartItems = shoppingCartService.getCartItems (currentUser.getId ());
-
-        return ResponseEntity.ok (cartItems);
+        if (Objects.nonNull(currentUser) ) {
+            return ResponseEntity.ok (shoppingCartService.getCartItems (currentUser.getId ()));
+        }
+        throw new UserNotFoundException (USER_NOT_EXISTS);
     }
 
     public Users getCurrentUser(){
