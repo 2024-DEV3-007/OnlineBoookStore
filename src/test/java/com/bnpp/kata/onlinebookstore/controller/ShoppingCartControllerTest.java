@@ -89,4 +89,20 @@ public class ShoppingCartControllerTest {
                 .andExpect(status().isOk ())
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
+
+    @Test
+    @DisplayName("Update the cart details : Invalid User")
+    void updateCart_invalidUser_shouldThrowException() throws Exception {
+
+        List<CartResponse> mockCartItems = new ArrayList<> ();
+        mockCartItems.add (CartResponse.builder ().build ());
+        CartRequest cartRequest = CartRequest.builder().items (Collections.emptyList ()).ordered (false).build ();
+        when(shoppingCartService.updateCart(null,cartRequest)).thenReturn(mockCartItems);
+        MockAuthentication (null);
+
+        mockMvc.perform(post(CART_UPDATE_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper ().writeValueAsString(cartRequest)))
+                .andExpect(status().isBadRequest ());
+    }
 }
