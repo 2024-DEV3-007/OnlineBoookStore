@@ -3,7 +3,9 @@ package com.bnpp.kata.onlinebookstore.controller;
 import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.repository.UserRepository;
 import com.bnpp.kata.onlinebookstore.service.ShoppingCartService;
+import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +19,14 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.bnpp.kata.onlinebookstore.constants.TestConstants.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -65,5 +70,23 @@ public class ShoppingCartControllerTest {
         when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
 
         SecurityContextHolder.setContext(mockSecurityContext);
+    }
+
+    @Test
+    @DisplayName("Update the cart details")
+    void updateCart_updateTheUserCart_shouldReturnListOfCartItems() throws Exception {
+
+        List<CartResponse> mockCartItems = new ArrayList<> ();
+        Users user = userRepository.save(Users.builder().username(USERNAME).password(PASSWORD).build());
+        mockCartItems.add (CartResponse.builder ().build ());
+        CartRequest cartRequest = CartRequest.builder().items (Collections.emptyList ()).ordered (false).build ();
+        when(shoppingCartService.updateCart(user.getId (),cartRequest)).thenReturn(mockCartItems);
+        MockAuthentication (user);
+
+        mockMvc.perform(post(CART_UPDATE_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper ().writeValueAsString(cartRequest)))
+                .andExpect(status().isOk ())
+                .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()));
     }
 }

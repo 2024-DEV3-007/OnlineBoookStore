@@ -2,14 +2,13 @@ package com.bnpp.kata.onlinebookstore.controller;
 
 import com.bnpp.kata.onlinebookstore.entity.Users;
 import com.bnpp.kata.onlinebookstore.service.ShoppingCartService;
+import com.bnpp.kata.onlinebookstore.store.CartRequest;
 import com.bnpp.kata.onlinebookstore.store.CartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +34,15 @@ public class ShoppingCartController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Users) authentication.getPrincipal();
+    }
+
+    @PostMapping("${onlinebookstore.endpoint.updateCart}")
+    public ResponseEntity<List<CartResponse>> updateCart(@RequestBody CartRequest cartRequests) {
+
+        Users currentUser = getCurrentUser();
+
+        List<CartResponse> response = shoppingCartService.updateCart(currentUser.getId(), cartRequests);
+
+        return ResponseEntity.ok (response);
     }
 }
