@@ -27,25 +27,22 @@ public class ShoppingCartController {
     public ResponseEntity<List<CartResponse>> getCartItems () {
 
         Users currentUser =  getCurrentUser();
-        if (Objects.nonNull(currentUser) ) {
-            return ResponseEntity.ok (shoppingCartService.getCartItems (currentUser.getId ()));
-        }
-        throw new UserNotFoundException (USER_NOT_EXISTS);
+        return ResponseEntity.ok (shoppingCartService.getCartItems (currentUser.getId ()));
     }
 
     public Users getCurrentUser(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Users) authentication.getPrincipal();
+        if(authentication!=null )
+            return (Users) authentication.getPrincipal();
+        throw new UserNotFoundException (USER_NOT_EXISTS);
     }
 
     @PostMapping("${onlinebookstore.endpoint.updateCart}")
     public ResponseEntity<List<CartResponse>> updateCart(@RequestBody CartRequest cartRequests) {
 
         Users currentUser = getCurrentUser();
-        if (Objects.nonNull(currentUser) ) {
-            return ResponseEntity.ok (shoppingCartService.updateCart (currentUser.getId (), cartRequests));
-        }
-        throw new UserNotFoundException (USER_NOT_EXISTS);
+        return ResponseEntity.ok (shoppingCartService.updateCart (currentUser.getId (), cartRequests));
+
     }
 }

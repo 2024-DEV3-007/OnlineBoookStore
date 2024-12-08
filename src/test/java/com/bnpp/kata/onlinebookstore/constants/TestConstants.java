@@ -23,4 +23,6 @@ public class TestConstants {
     public static final String SECOND_BOOK_NAME =  "The Clean Coder";
     public static final String BOOK_NAME_FOR_ID_10 =  "Thinking in Java";
     public static final String CART_UPDATE_API = "/api/cart/updateCart";
+    public static final String BASIC = "Basic ";
+    public static final String AUTHORIZATION =  "Authorization";
 }
