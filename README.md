@@ -42,6 +42,9 @@ Each commit messages contains **Title**. The title consists of the type of the m
     mvn clean install
 - The **Model Classes** used in the project are generated from the **OpenAPI** specification during the build process. Running `mvn clean install` will regenerate the models as part of the build.
 - Run the application
+- The frontend for this project is configured in `https://github.com/2024-DEV3-007/OnlineBookStoreClient.git`.
+Run the backend application first followed by the frontend.
+
 ## Test reports
 
 - Once after successful build of
