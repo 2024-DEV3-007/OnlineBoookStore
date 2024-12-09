@@ -148,4 +148,20 @@ public class ShoppingCartControllerTest {
         assertThrows (UserNotFoundException.class, () -> shoppingCartController.getCurrentUser());
 
     }
+
+    @Test
+    @DisplayName("Update the cart details : Invalid User")
+    void updateCart_invalidUser1_shouldThrowException() throws Exception {
+
+        List<CartResponse> mockCartItems = new ArrayList<> ();
+        Users user = userRepository.save(Users.builder().username(USERNAME).password(passwordEncoder.encode(PASSWORD)).build());
+        mockCartItems.add (CartResponse.builder ().build ());
+        CartRequest cartRequest = CartRequest.builder().items (Collections.emptyList ()).ordered (false).build ();
+
+        mockMvc.perform(post(CART_UPDATE_API)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper ().writeValueAsString(null))
+                        .header(AUTHORIZATION, createBasicAuthHeader()))
+                .andExpect(status().isInternalServerError ());
+    }
 }
